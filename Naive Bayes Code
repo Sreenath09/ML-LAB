@@ -1,24 +1,125 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import operator
+     
+
+train_label = open('train.label')
+
+#pi is the fraction of each class
+pi = {}
+
+#Set a class index for each document as key
+for i in range(1,21):
+    pi[i] = 0
+    
+#Extract values from training labels
+lines = train_label.readlines()
+
+#Get total number of    documents
+total = len(lines)
+
+#Count the occurence of each class
+for line in lines:
+    val = int(line.split()[0])
+    pi[val] += 1
+
+#Divide the count of each class by total documents 
+for key in pi:
+    pi[key] /= total
+    
+print("Probability of each class:")
+print("\n".join("{}: {}".format(k, v) for k, v in pi.items()))
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn import metrics
+     
 
-df = pd.read_csv("Book1.csv")
+df = pd.read_csv("pima_indian.csv")
 feature_col_names = ['num_preg', 'glucose_conc', 'diastolic_bp', 'thickness', 'insulin', 'bmi', 'diab_pred', 'age']
 predicted_class_names = ['diabetes']
-X = df[feature_col_names].values
+     
+
+X = df[feature_col_names].values 
 y = df[predicted_class_names].values
+     
+
 print(df.head)
 xtrain,xtest,ytrain,ytest=train_test_split(X,y,test_size=0.33)
-print ('\nThe total number of Training Data:',ytrain.shape)
-print ('The total number of Test Data:',ytest.shape)
+
+print ('\n the total number of Training Data :',ytrain.shape)
+print ('\n the total number of Test Data :',ytest.shape)
 clf = GaussianNB().fit(xtrain,ytrain.ravel())
 predicted = clf.predict(xtest)
 predictTestData= clf.predict([[6,148,72,35,0,33.6,0.627,50]])
-print('\nConfusion matrix')
+     
+
+print('\n Confusion matrix')
 print(metrics.confusion_matrix(ytest,predicted))
-print('\nAccuracy of the classifier:',metrics.accuracy_score(ytest,predicted))
-print('The value of Precision:', metrics.precision_score(ytest,predicted))
-print('The value of Recall:', metrics.recall_score(ytest,predicted))
+
+print('\n Accuracy of the classifier is',metrics.accuracy_score(ytest,predicted))
+
+print('\n The value of Precision', metrics.precision_score(ytest,predicted))
+
+print('\n The value of Recall', metrics.recall_score(ytest,predicted))
+
 print("Predicted Value for individual Test Data:", predictTestData)
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import operator
+
+#Training label
+train_label = open('train.label')
+
+#pi is the fraction of each class
+pi = {}
+
+#Set a class index for each document as key
+for i in range(1,21):
+    pi[i] = 0
+    
+#Extract values from training labels
+lines = train_label.readlines()
+
+#Get total number of documents
+total = len(lines)
+
+#Count the occurence of each class
+for line in lines:
+    val = int(line.split()[0])
+    pi[val] += 1
+
+#Divide the count of each class by total documents 
+for key in pi:
+    pi[key] /= total
+    
+print("Probability of each class:")
+print("\n".join("{}: {}".format(k, v) for k, v in pi.items()))
+
+#Training data
+train_data = open('train.data')
+df = pd.read_csv(train_data, delimiter=' ', names=['docIdx', 'wordIdx', 'count'])
+
+#Training label
+label = []
+train_label = open('train.label')
+lines = train_label.readlines()
+for line in lines:
+    label.append(int(line.split()[0]))
+
+#Increase label length to match docIdx
+docIdx = df['docIdx'].values
+i = 0
+new_label = []
+for index in range(len(docIdx)-1):
+    new_label.append(label[i])
+    if docIdx[index] != docIdx[index+1]:
+        i += 1
+new_label.append(label[i]) #for-loop ignores last value
+
+#Add label column
+df['classIdx'] = new_label
+
+df.head()
