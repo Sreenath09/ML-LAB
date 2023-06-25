@@ -1,6 +1,4 @@
 
-Open In Colab
-
 import csv
 a = []
 with open('enjoysport.csv', 'r') as csvfile:
